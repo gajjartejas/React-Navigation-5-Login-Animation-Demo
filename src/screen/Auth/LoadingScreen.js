@@ -16,7 +16,7 @@ import {updateuser, updatelanguage} from '../../actions/userActions';
 import AuthNavigator from '../../navigator/AuthNavigator';
 import MainNavigator from '../..//navigator/MainNavigator';
 
-const transition_fade = (
+const TRANSITION_FADE = (
   <Transition.Sequence>
     <Transition.Together>
       <Transition.In type="fade" durationMs={600} delayMs={0} />
@@ -24,7 +24,7 @@ const transition_fade = (
   </Transition.Sequence>
 );
 
-const transitions_slide_bottomout_fade = (
+const TRANSITIONS_SLIDE_BOTTOMOUT_FADE = (
   <Transition.Sequence>
     <Transition.Together>
       <Transition.Out type="slide-bottom" durationMs={600} interpolation="easeOut" propagation="bottom" />
@@ -33,14 +33,14 @@ const transitions_slide_bottomout_fade = (
   </Transition.Sequence>
 );
 
-const transition_scale_fade = (
+const TRANSITION_SCALE_FADE = (
   <Transition.Together>
     <Transition.Out durationMs={600} type="scale" />
     <Transition.Out durationMs={600} type="fade" />
   </Transition.Together>
 );
 
-const transition_fade_silde_bottom_right = (
+const TRANSITION_FADE_SILDE_BOTTOM_RIGHT = (
   <Transition.Sequence>
     <Transition.Together>
       <Transition.Out type="fade" durationMs={600} interpolation="easeOut" />
@@ -52,7 +52,7 @@ const transition_fade_silde_bottom_right = (
 );
 
 //Assign above transition
-const transition = transition_fade;
+const TRANSITION = TRANSITION_FADE;
 
 class LoadingScreen extends React.Component {
   constructor(props) {
@@ -85,7 +85,7 @@ class LoadingScreen extends React.Component {
 
     return (
       <NavigationContainer>
-        <Transitioning.View ref={this.vref} transition={transition} style={styles.transitionContainer}>
+        <Transitioning.View ref={this.vref} transition={TRANSITION} style={styles.transitionContainer}>
           {this.props.loginStatus === 1 && <MainNavigator />}
           {this.props.loginStatus === 0 && <AuthNavigator />}
         </Transitioning.View>
