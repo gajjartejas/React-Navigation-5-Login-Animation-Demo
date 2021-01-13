@@ -11,6 +11,15 @@ As we know switch navigator is removed from react navigation 5. I have used redu
 
 ![](demo.gif)
 
+## Code
+See: `src/screen/Auth/LoadingScreen.js` File.
+```
+//Assign above transition
+const TRANSITIONS = [TRANSITION_FADE, TRANSITIONS_SLIDE_BOTTOMOUT_FADE, TRANSITION_SCALE_FADE, TRANSITION_FADE_SILDE_BOTTOM_RIGHT];
+
+//Pick 0 to 3 you would like
+const TRANSITION = TRANSITIONS[0];
+```
 ## Thirdparty library used
 1. React navigation
 2. React native reanimated
