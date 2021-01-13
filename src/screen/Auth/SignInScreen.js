@@ -1,61 +1,46 @@
 import React from 'react';
-import {StyleSheet, View, Text, TouchableOpacity, Keyboard, ScrollView, SafeAreaView, Dimensions, Image} from 'react-native';
+import {StyleSheet, View, Text, TouchableOpacity, SafeAreaView, Image} from 'react-native';
 
 //ThirdParty
 import AsyncStorage from '@react-native-community/async-storage';
-import {TextField, FilledTextField, OutlinedTextField} from 'react-native-material-textfield';
+import {TextField} from 'react-native-material-textfield';
 
 //Redux
-import {connect} from 'react-redux';
-import {store} from '../../store/index';
-import {updateuser, updatelanguage} from '../../actions/userActions';
+import {updateUser} from '../../actions/userActions';
+import {useDispatch} from 'react-redux';
 
-class SignInScreen extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+function SignInScreen() {
+  const dispatch = useDispatch();
 
-  componentDidMount() {}
-
-  _loginPressed = () => {
+  const _loginPressed = () => {
     let loginData = {username: 'Tony', token: '123359595'};
-
     AsyncStorage.setItem('data', JSON.stringify(loginData));
-
-    store.dispatch(updateuser(loginData));
+    dispatch(updateUser(loginData));
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <SafeAreaView>
-          <View style={styles.viewContainer}>
-            <Image source={require('../../assets/images/ic_logo.png')} style={styles.appImage} />
-
-            <Text style={styles.proceedLoginText}>Proceed with your </Text>
-            <Text style={styles.loginText}>Login </Text>
-
-            <TextField label="Username" containerStyle={styles.userNameTextfield} />
-
-            <TextField label="Password" />
-
-            <TouchableOpacity
-              onPress={() => {
-                this._loginPressed();
-              }}
-              style={styles.loginButton}>
-              <Text style={styles.loginButtonText}>Login</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.forgotPassowrdButton}>
-              <Text style={styles.forgotPasswordButtonText}>Forgot password?</Text>
-            </TouchableOpacity>
-          </View>
-        </SafeAreaView>
-      </View>
-    );
-  }
+  return (
+    <View style={styles.container}>
+      <SafeAreaView>
+        <View style={styles.viewContainer}>
+          <Image source={require('../../assets/images/ic_logo.png')} style={styles.appImage} />
+          <Text style={styles.proceedLoginText}>Proceed with your </Text>
+          <Text style={styles.loginText}>Login </Text>
+          <TextField label="Username" containerStyle={styles.userNameTextfield} />
+          <TextField label="Password" />
+          <TouchableOpacity
+            onPress={() => {
+              _loginPressed();
+            }}
+            style={styles.loginButton}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.forgotPassowrdButton}>
+            <Text style={styles.forgotPasswordButtonText}>Forgot password?</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -118,11 +103,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (store) => {
-  return {
-    userdata: store.user.userdata,
-    loginStatus: store.user.loginStatus,
-  };
-};
-
-export default connect(mapStateToProps)(SignInScreen);
+export default SignInScreen;

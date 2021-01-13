@@ -1,10 +1,10 @@
 import {UPDATE_USER} from './actionTypes';
 
-const updateuser = (userdata) => {
+const updateUser = (userdata) => {
   return {
     type: UPDATE_USER,
     userdata: userdata,
   };
 };
 
-export {updateuser};
+export {updateUser};

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useRef} from 'react';
 import {StyleSheet, View} from 'react-native';
 
 //ThirdParty
@@ -8,15 +8,15 @@ import {NavigationContainer} from '@react-navigation/native';
 import {Transitioning, Transition} from 'react-native-reanimated';
 
 //Redux
-import {connect} from 'react-redux';
-import {store} from '../../store/index';
-import {updateuser, updatelanguage} from '../../actions/userActions';
+import {updateUser} from '../../actions/userActions';
+import {useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
 
 //Custom Modules
 import AuthNavigator from '../../navigator/AuthNavigator';
 import MainNavigator from '../..//navigator/MainNavigator';
 
-const transition_fade = (
+const TRANSITION_FADE = (
   <Transition.Sequence>
     <Transition.Together>
       <Transition.In type="fade" durationMs={600} delayMs={0} />
@@ -24,7 +24,7 @@ const transition_fade = (
   </Transition.Sequence>
 );
 
-const transitions_slide_bottomout_fade = (
+const TRANSITIONS_SLIDE_BOTTOMOUT_FADE = (
   <Transition.Sequence>
     <Transition.Together>
       <Transition.Out type="slide-bottom" durationMs={600} interpolation="easeOut" propagation="bottom" />
@@ -33,14 +33,14 @@ const transitions_slide_bottomout_fade = (
   </Transition.Sequence>
 );
 
-const transition_scale_fade = (
+const TRANSITION_SCALE_FADE = (
   <Transition.Together>
     <Transition.Out durationMs={600} type="scale" />
     <Transition.Out durationMs={600} type="fade" />
   </Transition.Together>
 );
 
-const transition_fade_silde_bottom_right = (
+const TRANSITION_FADE_SILDE_BOTTOM_RIGHT = (
   <Transition.Sequence>
     <Transition.Together>
       <Transition.Out type="fade" durationMs={600} interpolation="easeOut" />
@@ -52,46 +52,48 @@ const transition_fade_silde_bottom_right = (
 );
 
 //Assign above transition
-const transition = transition_fade;
+const TRANSITIONS = [TRANSITION_FADE, TRANSITIONS_SLIDE_BOTTOMOUT_FADE, TRANSITION_SCALE_FADE, TRANSITION_FADE_SILDE_BOTTOM_RIGHT];
 
-class LoadingScreen extends React.Component {
-  constructor(props) {
-    super(props);
-  }
+//Pick 0 to 3 you would like
+const TRANSITION = TRANSITIONS[0];
 
-  async componentDidMount() {
-    CustomSplashScreen.hide();
+function LoadingScreen() {
+  const ref = useRef();
+  const loginStatus = useSelector((state) => state.user.loginStatus);
+  const dispatch = useDispatch();
 
-    this.getAsyncData();
+  useEffect(() => {
+    console.log('loginStatus', loginStatus);
 
-    this.vref = React.createRef();
-  }
+    async function getAsyncData() {
+      //Get User data
+      let data = await AsyncStorage.getItem('data');
 
-  getAsyncData = async () => {
-    //Get User data
-    let data = await AsyncStorage.getItem('data');
-
-    //Update redux state
-    store.dispatch(updateuser(data));
-  };
-
-  render() {
-    if (this.props.loginStatus === -1) {
-      // We haven't finished checking for the user logged in or not
-      return <View style={styles.container}></View>;
+      console.log(data);
+      //Update redux state
+      dispatch(updateUser(data));
     }
 
-    this.vref && this.vref.current && this.vref.current.animateNextTransition();
+    CustomSplashScreen.hide();
 
-    return (
-      <NavigationContainer>
-        <Transitioning.View ref={this.vref} transition={transition} style={styles.transitionContainer}>
-          {this.props.loginStatus === 1 && <MainNavigator />}
-          {this.props.loginStatus === 0 && <AuthNavigator />}
-        </Transitioning.View>
-      </NavigationContainer>
-    );
+    getAsyncData();
+  });
+
+  if (loginStatus === -1) {
+    // We haven't finished checking for the user logged in or not
+    return <View style={styles.container} />;
   }
+
+  ref && ref.current && ref.current.animateNextTransition();
+
+  return (
+    <NavigationContainer>
+      <Transitioning.View ref={ref} transition={TRANSITION} style={styles.transitionContainer}>
+        {loginStatus === 1 && <MainNavigator />}
+        {loginStatus === 0 && <AuthNavigator />}
+      </Transitioning.View>
+    </NavigationContainer>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -104,11 +106,4 @@ const styles = StyleSheet.create({
   },
 });
 
-const mapStateToProps = (store) => {
-  return {
-    userdata: store.user.userdata,
-    loginStatus: store.user.loginStatus,
-  };
-};
-
-export default connect(mapStateToProps)(LoadingScreen);
+export default LoadingScreen;
